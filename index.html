@@ -1,0 +1,100 @@
+<!doctype html>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+     #scene{
+     	width:500px;height:500px;
+     	border:1px solid #ccc;
+     	margin:0 auto;
+     	position:relative;
+     }
+     .block{
+     	width:25px;height:25px;
+     	float:left;
+      box-sizing:border-box;
+      border-radius:50%;
+     }
+     .snackbody{
+     	background:green;
+      /*animation:sbody 1s infinite;*/
+     }
+     @keyframes sbody{
+        %0{
+          background:green;
+        }
+        100%{
+          background:radial-gradient(#fff 20%,green);
+        }
+     }
+     .snackhead{
+     	background:red;
+      
+     }
+     .food{
+      background:yellow;
+     }
+	</style>
+	<div id="scene"></div>
+<script src="jquery.js"></script>
+<script>
+   var snackarr=[]
+	 for (var i=0;i<20;i++){
+        for(var j=0; j<20;j++){
+            $("<div></div>").addClass("block").appendTo("#scene").attr("id",j+"-"+i);
+        }
+	 };
+	 var snackarr=[{x:0,y:0},{x:1,y:0},{x:2,y:0}];
+   var head=snackarr[snackarr.length-1];
+   var tail=snackarr[0]
+   function drawsnack(){
+   $(".snackbody").removeClass("snackbody"); 
+   $(".snackhead").removeClass("snackhead"); 
+   $.each(snackarr,function(i,v){
+          $("#"+v.x+"-"+v.y).addClass("snackbody");
+   })
+   $("#"+head.x+"-"+head.y).addClass("snackhead");
+   }
+   drawsnack();
+   var dir="r"
+   function move(){
+     switch(dir){
+      case "r":head={x:head.x+1,y:head.y};break;
+      case "l":head={x:head.x-1,y:head.y};break;
+      case "t":head={x:head.x,y:head.y-1};break;
+      case "b":head={x:head.x,y:head.y+1};break;
+     }
+     if($("#"+head.x+"-"+head.y).length=="0"||$("#"+head.x+"-"+head.y).hasClass("snackbody")){
+       alert("游戏失败");
+       clearInterval(t)
+       return;
+     }
+     if($("#"+head.x+"-"+head.y).hasClass("food")){
+       $("#"+head.x+"-"+head.y).removeClass("food");
+       createFood();
+     }else{
+     snackarr[0]=null;
+     snackarr.shift();
+     }
+     snackarr.push(head);
+     drawsnack();
+   }
+   var t=setInterval(function(){
+      move();
+   },250)
+   document.onkeydown=function(e){
+     var keycode=e.keyCode;
+     switch(keycode){
+       case 37:dir="l";break;
+       case 38:dir="t";break;
+       case 39:dir="r";break;
+       case 40:dir="b";break;
+     }
+   };
+   function createFood(){
+   do{var posx=Math.floor(Math.random()*20)
+     var posy=Math.floor(Math.random()*20)
+   }while($("#"+posx+"-"+posy).hasClass("snackbody"))
+     $("#"+posx+"-"+posy).addClass("food") 
+   }; 
+   createFood();
+</script>
